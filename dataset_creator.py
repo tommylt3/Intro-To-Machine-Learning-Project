@@ -1,32 +1,40 @@
 from pynput import keyboard
-import threading
 import mediapipe as mp
 import cv2
+import pandas as pd
 
-# Function to be triggered when a specific key is pressed
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+pressed_keys = list()
+df = pd.DataFrame()
+cap = cv2.VideoCapture(0)
+
 def on_press(key):
-    frame = cv2.imread("image.jpg")
-    results = mp_hands.process(frame)
-    if results.multi_hand_landmarks:
-        print(key)
-    else:
-        print("No Hands")
-# Start listening in a separate thread to avoid blocking other keyboard input
-def listen_to_keyboard():
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
+    global pressed_keys
+    pressed_keys += [key]
 
+def on_release(key):
+    global df
+    global hands
+    global cap
+    try:
+        if not cap.isOpened():
+            print(f"Camera Blocked with key {key.char}")
+            return
+        ret, frame = cap.read()
+        if not ret:
+            print(f"Failed to Capture with key {key.char}")
+            return
+        img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = hands.process(img_rgb)
+        if results.multi_hand_landmarks:
+            print(len(results.multi_hand_landmarks))
 
-# MP Hands Model
-mp_hands = mp.solutions.hands.Hands()
+    except:
+        raise(AttributeError())
 
-# Create a new thread for the listener
-listener_thread = threading.Thread(target=listen_to_keyboard)
-listener_thread.daemon = True  # Make the thread exit when the program exits
-listener_thread.start()
-
-
+listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+listener.start()
 
 while True:
-    pass  # The main program loop can continue doing other tasks
-
+    pass
