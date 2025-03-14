@@ -21,12 +21,13 @@ else:
 
 # Camera Feed
 cap = cv2.VideoCapture(0)
-
+lKey = 'Enter'
 # On Key Press, Capture Hands
 def on_press(key):
     global df
     global hands
     global cap
+    global lKey
     special_keys = {
         keyboard.Key.space: 'Space',
         keyboard.Key.enter: 'Enter',
@@ -65,11 +66,11 @@ def on_press(key):
 
     try:
         if not cap.isOpened():
-            print(f"Camera Blocked with key {key.char}")
+            print(f"Camera Blocked with key {cKey}")
             return
         ret, frame = cap.read()
         if not ret:
-            print(f"Failed to Capture with key {key.char}")
+            print(f"Failed to Capture with key {cKey}")
             return
         img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(img_rgb)
@@ -95,7 +96,7 @@ def on_press(key):
 
             # Prepare the row data
             row = [cKey]
-
+            row += [lKey]
             # Add left hand landmarks to the row (x, y, z for each of the 21 landmarks)
             row += [coord[0] for coord in left_hand_landmarks]  # left_x for all 21 landmarks
             row += [coord[1] for coord in left_hand_landmarks]  # left_y for all 21 landmarks
@@ -111,7 +112,7 @@ def on_press(key):
 
                 # Increment the key counter for the next row
             key_counter += 1
-
+            lKey = cKey
     except:
         raise(AttributeError())
 
