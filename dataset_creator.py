@@ -10,7 +10,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 # Check if CSV exists, if not, create a new DataFrame with the column names
-columns = ['key'] + \
+columns = ['key'] + ['last_key'] + \
           [f'left_{i}_x' for i in range(21)] + [f'left_{i}_y' for i in range(21)] + [f'left_{i}_z' for i in range(21)] + \
           [f'right_{i}_x' for i in range(21)] + [f'right_{i}_y' for i in range(21)] + [f'right_{i}_z' for i in range(21)]
 file_path = 'keys.csv'
