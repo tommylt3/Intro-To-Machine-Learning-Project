@@ -2,6 +2,8 @@ import requests
 import json
 import os
 
+
+# Moxfield Connection
 class Moxfield:
     def __init__(self):
         self.api_key = os.getenv("MOXFIELD_KEY")
@@ -10,8 +12,11 @@ class Moxfield:
     def make_request(self, deck_id : str):
         url = self.domain + deck_id
         req = requests.get(url, headers={'User-Agent': self.api_key})
-        jsonObj = json.loads(req.text)
-        return jsonObj
+        if req.status_code == 200:
+            jsonObj = json.loads(req.text)
+            return jsonObj
+        else:
+            raise Exception(f"Bad Status Code for Moxfield, {req.status_code}")
 
     def make_plaintext_list(self, jsResponse):
         decklist = list()
@@ -23,8 +28,30 @@ class Moxfield:
 
 class topdeckgg:
     def __init__(self):
-        pass
+        self.api_key = os.getenv("TOPDECK_KEY")
+        self.domain = f"https://topdeck.gg/api/v2/tournaments"
 
-mox = Moxfield()
-deckThing = mox.make_request('OQd1CWtuFUinDEpepZfC3g')
-print(mox.make_plaintext_list(deckThing), sep='\n')
+    def get_cedh_tournaments(self):
+        url = self.domain
+        req = requests.post(url, \
+                headers={'Authorization' : self.api_key}, data={"last":10, "game":"Magic: The Gathering", "format": "EDH", "participantMin" : 20})
+        if req.status_code == 200:
+            tournaments = json.loads(req.text)
+            tid_list = list()
+            for i in tournaments:
+                tid_list.append(i["TID"])
+            return tid_list
+        else:
+            raise Exception(f"Bad Status Code for Topdeck, {req.status_code}")
+
+    def get_tournament_results(self, TID):
+        tournament = dict()
+        url = self.domain + f"/{TID}/rounds"
+        req = requests.get(url, headers={'Authorization': self.api_key})
+        tournament = json.loads(req.text)
+        return tournament
+
+topdeck = topdeckgg()
+tourneys = topdeck.get_cedh_tournaments()
+for i in tourneys:
+    print(json.dumps(topdeck.get_tournament_results(i), indent=4))
