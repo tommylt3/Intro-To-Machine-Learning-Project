@@ -13,7 +13,7 @@ hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5
 columns = ['key'] + ['last_key'] + \
           [f'left_{i}_x' for i in range(21)] + [f'left_{i}_y' for i in range(21)] + [f'left_{i}_z' for i in range(21)] + \
           [f'right_{i}_x' for i in range(21)] + [f'right_{i}_y' for i in range(21)] + [f'right_{i}_z' for i in range(21)]
-file_path = 'keys.csv'
+file_path = 'keys2.csv'
 if os.path.exists(file_path):
     df = pd.read_csv(file_path)
 else:
@@ -110,7 +110,7 @@ def save_data_to_csv():
     global df
     print("Saving data to CSV...")
     df.to_csv(file_path, index=True)
-    print("Data saved to keys.csv")
+    print("Data saved to keys2.csv")
 
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
