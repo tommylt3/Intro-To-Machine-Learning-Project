@@ -51,7 +51,7 @@ def on_press(key):
             # Handle special keys
             cKey = ord(special_keys.get(key, str(key)))
     except Exception as e:
-        print(f'Error: {e}')
+        cKey = ord('\u0000')
 
     try:
         if not cap.isOpened():
