@@ -6,5 +6,4 @@ Data Gathered Manually By Scanning Hundreds of Sentences Manually Typed Using a 
 Data was gathered using libraries pynput, pandas, and mediapipe.hands
 
 
-## MTG Tournament Result Predictor
-### Data Sources
+## Wii Sports AI
